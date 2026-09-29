@@ -1,0 +1,179 @@
+{
+  "region": "Chicago metropolitan area, Illinois, USA",
+  "total_cities": 20,
+  "total_edges": 25,
+  "locations": {
+    "Chicago": {
+      "lat": 41.8755616,
+      "lon": -87.6244212
+    },
+    "Evanston": {
+      "lat": 42.0470043,
+      "lon": -87.6846053
+    },
+    "Skokie": {
+      "lat": 42.0262972,
+      "lon": -87.7521069
+    },
+    "Morton Grove": {
+      "lat": 42.0405857,
+      "lon": -87.7825696
+    },
+    "Niles": {
+      "lat": 42.0289319,
+      "lon": -87.8122348
+    },
+    "Wilmette": {
+      "lat": 42.0887132,
+      "lon": -87.7025069
+    },
+    "Glenview": {
+      "lat": 42.0700662,
+      "lon": -87.8114044
+    },
+    "Northbrook": {
+      "lat": 42.128704,
+      "lon": -87.8265089
+    },
+    "Park Ridge": {
+      "lat": 42.0112329,
+      "lon": -87.8406031
+    },
+    "Des Plaines": {
+      "lat": 42.0415823,
+      "lon": -87.8873916
+    },
+    "Rosemont": {
+      "lat": 41.9941334,
+      "lon": -87.8756737
+    },
+    "Schiller Park": {
+      "lat": 41.9558637,
+      "lon": -87.8708965
+    },
+    "Franklin Park": {
+      "lat": 41.9353084,
+      "lon": -87.865618
+    },
+    "Melrose Park": {
+      "lat": 41.900299,
+      "lon": -87.8569745
+    },
+    "River Forest": {
+      "lat": 41.8978091,
+      "lon": -87.8139483
+    },
+    "Oak Park": {
+      "lat": 41.8878145,
+      "lon": -87.7887615
+    },
+    "Forest Park": {
+      "lat": 41.8794989,
+      "lon": -87.8136997
+    },
+    "Berwyn": {
+      "lat": 41.8505874,
+      "lon": -87.7936685
+    },
+    "Cicero": {
+      "lat": 41.8455398,
+      "lon": -87.7540199
+    },
+    "Elmwood Park": {
+      "lat": 41.9205931,
+      "lon": -87.8160169
+    }
+  },
+  "graph": {
+    "Chicago": {
+      "Evanston": 22.7,
+      "Oak Park": 15.92,
+      "Cicero": 14.1
+    },
+    "Evanston": {
+      "Chicago": 22.7,
+      "Skokie": 8.02,
+      "Wilmette": 5.61
+    },
+    "Skokie": {
+      "Evanston": 8.02,
+      "Morton Grove": 3.75,
+      "Glenview": 9.56
+    },
+    "Morton Grove": {
+      "Skokie": 3.75,
+      "Niles": 4.18
+    },
+    "Niles": {
+      "Morton Grove": 4.18,
+      "Park Ridge": 5.13,
+      "Glenview": 5.53
+    },
+    "Wilmette": {
+      "Evanston": 5.61,
+      "Glenview": 10.74
+    },
+    "Glenview": {
+      "Wilmette": 10.74,
+      "Northbrook": 8.88,
+      "Skokie": 9.56,
+      "Niles": 5.53
+    },
+    "Northbrook": {
+      "Glenview": 8.88
+    },
+    "Park Ridge": {
+      "Niles": 5.13,
+      "Des Plaines": 5.37,
+      "Rosemont": 4.77
+    },
+    "Des Plaines": {
+      "Park Ridge": 5.37,
+      "Rosemont": 6.52
+    },
+    "Rosemont": {
+      "Des Plaines": 6.52,
+      "Schiller Park": 7.12,
+      "Park Ridge": 4.77
+    },
+    "Schiller Park": {
+      "Rosemont": 7.12,
+      "Franklin Park": 2.51
+    },
+    "Franklin Park": {
+      "Schiller Park": 2.51,
+      "Melrose Park": 4.53,
+      "Elmwood Park": 5.89
+    },
+    "Melrose Park": {
+      "Franklin Park": 4.53,
+      "River Forest": 4.78
+    },
+    "River Forest": {
+      "Melrose Park": 4.78,
+      "Oak Park": 3.24
+    },
+    "Oak Park": {
+      "River Forest": 3.24,
+      "Forest Park": 2.9,
+      "Chicago": 15.92,
+      "Berwyn": 4.57
+    },
+    "Forest Park": {
+      "Oak Park": 2.9,
+      "Berwyn": 4.85
+    },
+    "Berwyn": {
+      "Forest Park": 4.85,
+      "Cicero": 3.9,
+      "Oak Park": 4.57
+    },
+    "Cicero": {
+      "Berwyn": 3.9,
+      "Chicago": 14.1
+    },
+    "Elmwood Park": {
+      "Franklin Park": 5.89
+    }
+  }
+}

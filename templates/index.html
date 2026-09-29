@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chicago Search Visualizer</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; display: flex; height: 100vh; }
+    #sidebar { width: 330px; padding: 16px; overflow-y: auto; background: #f7f7f7; box-sizing: border-box; }
+    #map { flex: 1; }
+    h1 { font-size: 20px; margin-top: 0; }
+    label { display: block; font-weight: bold; margin-top: 12px; }
+    select, button { width: 100%; padding: 8px; margin-top: 4px; font-size: 14px; }
+    button { margin-top: 16px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    .box { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 10px; margin-top: 16px; font-size: 14px; }
+    .box h3 { margin: 0 0 8px; font-size: 15px; }
+    .box p { margin: 6px 0; }
+    @media (max-width: 700px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: 50vh; }
+    }
+  </style>
+</head>
+<body>
+  <div id="sidebar">
+    <h1>Chicago Search Visualizer</h1>
+
+    <label for="start">Start</label>
+    <select id="start"></select>
+
+    <label for="goal">Destination</label>
+    <select id="goal"></select>
+
+    <label for="algorithm">Algorithm</label>
+    <select id="algorithm">
+      <option value="bfs">Breadth-First Search (BFS)</option>
+      <option value="dfs">Depth-First Search (DFS)</option>
+      <option value="ucs">Uniform-Cost Search (UCS)</option>
+      <option value="ids">Iterative Deepening Search (IDS)</option>
+      <option value="greedy">Greedy Best-First Search</option>
+      <option value="astar">A* Search</option>
+    </select>
+
+    <button onclick="runSearch()">Find Route</button>
+
+    <div class="box" id="result">
+      <h3>Result</h3>
+      <p>Pick a start, destination, and algorithm.</p>
+    </div>
+
+    <div class="box" id="concept"></div>
+  </div>
+
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const conceptNotes = {
+      bfs: {
+        name: "Breadth-First Search",
+        idea: "Searches outward in layers: every place one road away, then two roads away, and so on.",
+        selection: "Uses a FIFO queue, so it always expands the place that was discovered earliest.",
+        info: "Depth only (number of roads). It ignores distance, so it finds the route with the fewest roads, not the shortest one."
+      },
+      dfs: {
+        name: "Depth-First Search",
+        idea: "Follows one road as far as it can go before backing up and trying another.",
+        selection: "Uses a LIFO stack, so it always expands the most recently discovered place.",
+        info: "Depth only. It ignores distance, so the route it finds can be long."
+      },
+      ucs: {
+        name: "Uniform-Cost Search",
+        idea: "Grows outward in order of total distance driven, like ripples that spread by kilometers instead of by roads.",
+        selection: "Uses a priority queue and expands the place with the lowest path cost g(n).",
+        info: "Path cost only (road distance so far). It always finds the shortest route."
+      },
+      ids: {
+        name: "Iterative Deepening Search",
+        idea: "Runs depth-limited DFS with a limit of 0, then 1, then 2, and so on, until it reaches the goal.",
+        selection: "Within each round it expands like DFS (most recent first), but never goes past the current depth limit.",
+        info: "Depth only. Like BFS it finds the route with the fewest roads, while using as little memory as DFS."
+      },
+      greedy: {
+        name: "Greedy Best-First Search",
+        idea: "Always heads toward whatever place looks closest to the destination.",
+        selection: "Uses a priority queue and expands the place with the lowest h(n), the straight-line distance to the goal.",
+        info: "Heuristic only. It is usually fast, but because it ignores the distance already driven it can miss the shortest route."
+      },
+      astar: {
+        name: "A* Search",
+        idea: "Balances the distance already driven with an estimate of the distance left.",
+        selection: "Uses a priority queue and expands the place with the lowest f(n) = g(n) + h(n).",
+        info: "Path cost plus heuristic. Straight-line distance never overestimates road distance, so A* finds the shortest route."
+      }
+    };
+
+    const map = L.map("map");
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+
+    let locations = {};
+    let pathLine = null;
+
+    function point(name) {
+      return [locations[name].lat, locations[name].lon];
+    }
+
+    fetch("/api/map")
+      .then(response => response.json())
+      .then(data => {
+        locations = data.locations;
+        const names = Object.keys(locations).sort();
+
+        for (const name of names) {
+          document.getElementById("start").add(new Option(name, name));
+          document.getElementById("goal").add(new Option(name, name));
+          L.circleMarker(point(name), { radius: 6, color: "#333" })
+            .bindTooltip(name)
+            .addTo(map);
+        }
+        document.getElementById("goal").selectedIndex = names.length - 1;
+
+        for (const place in data.graph) {
+          for (const neighbor in data.graph[place]) {
+            if (place < neighbor) {
+              L.polyline([point(place), point(neighbor)], { color: "#999", weight: 2 })
+                .bindTooltip(data.graph[place][neighbor] + " km")
+                .addTo(map);
+            }
+          }
+        }
+
+        map.fitBounds(names.map(point), { padding: [30, 30] });
+        showConcept();
+      });
+
+    function showConcept() {
+      const note = conceptNotes[document.getElementById("algorithm").value];
+      document.getElementById("concept").innerHTML = `
+        <h3>Algorithm Concept Note: ${note.name}</h3>
+        <p><b>Main Idea:</b> ${note.idea}</p>
+        <p><b>Node Selection:</b> ${note.selection}</p>
+        <p><b>Information Used:</b> ${note.info}</p>`;
+    }
+    document.getElementById("algorithm").addEventListener("change", showConcept);
+
+    function runSearch() {
+      const request = {
+        start: document.getElementById("start").value,
+        goal: document.getElementById("goal").value,
+        algorithm: document.getElementById("algorithm").value
+      };
+
+      fetch("/api/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(request)
+      })
+        .then(response => response.json())
+        .then(result => {
+          const box = document.getElementById("result");
+          if (pathLine) map.removeLayer(pathLine);
+
+          if (result.error) {
+            box.innerHTML = `<h3>Result</h3><p>${result.error}</p>`;
+            return;
+          }
+          if (result.path.length === 0) {
+            box.innerHTML = `<h3>Result</h3><p>No route found.</p>`;
+            return;
+          }
+
+          pathLine = L.polyline(result.path.map(point), { color: "#2563eb", weight: 6 }).addTo(map);
+          box.innerHTML = `
+            <h3>Result</h3>
+            <p><b>Path:</b> ${result.path.join(" → ")}</p>
+            <p><b>Total distance:</b> ${result.cost} km</p>
+            <p><b>Roads taken:</b> ${result.path.length - 1}</p>
+            <p><b>Nodes expanded:</b> ${result.nodes_expanded}</p>
+            <p><b>Time:</b> ${result.time_ms} ms</p>`;
+        });
+    }
+  </script>
+</body>
+</html>
