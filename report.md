@@ -42,7 +42,7 @@
 ## Section 4: Deployed and Presentation Information
 - **Deployment Platform:** Render
 - **Live Deployment URL:** https://ai-search-project-1ye9.onrender.com/
-- **Video Presentation Link:** [Provide an accessible link to your 5–7 minute video presentation]
+- **Video Presentation Link:** https://drive.google.com/file/d/13TQMLeC2ql7Dkk43grFhiUE-IPzxW81L/view?usp=sharing
 
 ---
 
